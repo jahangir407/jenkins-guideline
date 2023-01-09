@@ -1,0 +1,41 @@
+version: '3'
+services:
+  jenkins:
+    container_name: jenkins
+    #image: jenkins/jenkins:lts  
+    image: jenkins_custom
+    build: 
+      context: jenkins_host
+    ports:
+      - "8080:8080"
+    volumes:
+      - $PWD/jenkins_home:/var/jenkins_home
+      - $PWD/remote_host/jenkins_ssh_credential:/tmp #for storing  and mapping  the key file to remote_hsot
+      - "/var/run/docker.sock:/var/run/docker.sock" #mapping host docker sock to container docker sock. Ir allows to run  docker cmd in host machine from the container. 
+    networks:
+      - net
+  
+  remote_host:
+    container_name: remote_host
+    image: remote_host
+    build:
+      context: remote_host
+    user: root
+    volumes:
+      - $PWD/jenkins_home/jenkins_ssh_credential/remote-key.pub:/home/remote_user/.ssh/authorized_keys
+    networks:
+      - net
+
+  db_host:
+    container_name: db
+    image: mysql:5.7
+    environment:
+      - "MYSQL_ROOT_PASSWORD=1234"
+    volumes:
+      - "$PWD/db_data:/var/lib/mysql"
+    networks:
+      - net
+
+
+networks:
+  net:

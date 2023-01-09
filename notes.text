@@ -1,0 +1,55 @@
+ 
+ 0. Install Jenkins by following this guideline -> https://www.jenkins.io/doc/book/installing/docker/#setup-wizard
+ 
+ 1. to print the password in the console without having to exec into the container.
+     - sudo docker exec ${CONTAINER_ID or CONTAINER_NAME} cat /var/jenkins_home/secrets/initialAdminPassword
+         - sudo docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
+
+
+2. passing build params from remote through url
+   - http://localhost:8080/job/My_First_Job/buildWithParameters?token=123456&delay=0&cause="trigger by remote"&Name=remoteJahangir&Age=remote100
+
+
+3. copy file from host to docker container 
+    - docker cp file_name /path_name container_name:file_name/path_name -R   (-R -> for recursive, applicable for folder)
+       => docker cp script.sh jenkins:/tmp/script.sh
+
+4. need to change owner from host owner to container owner 
+    - sudo chown uid:groupid file_name/path_name -R (-R -> for recursive, applicable for folder)
+        => sudo chown 1000:1000 script.sh 
+exit
+
+
+5.  to check current user id (To chekc host user id , run this cmd in host machine. To check container user id, run this cmd inside the container  )
+   - id
+
+6. ssh connect to remote_host (ssh connection from one container to another container)
+    - step 1: docker exec -it host_container_name bash
+    - step 2: ssh remote_user@remote_host_container_name 
+    - step 3: enter password (password would be remote host password) 
+
+7. copying file to one container from another container 
+    - docker cp jenkins:/tmp/remote-key /Users/jahangirh.bhuyain/Documents/R_Projects/tech.learning/jenkins/docker.setup/remote_host
+    - docker cp remote_host/remote-key.pub remote_host:/home/remote_user/.ssh/authorized_keys
+
+8. generate ssh-key 
+    - ssh-keygen -f remote-key
+        - note: Recent versions of OpenSSH (7.8 and newer) generate keys in new OpenSSH format by default, which starts with...
+               ref: https://stackoverflow.com/questions/53134212/invalid-privatekey-when-using-jsch
+        - so we need to convert the private key to the classic OpenSSH format:
+             - ssh-keygen -p -f <privateKeyFile> -m pem -P passphrase -N passphrase
+
+        - then we need to insert the private key and "passphrase" inside the jenkins credential store 
+
+9. connect to remote data base using mysql client
+    -  mysql -u root -h db_host -p   (u -> user, h -> host , p-> password)
+
+10. to check the path of docker.sock in host machine
+-> ls /var/run/docker.sock 
+
+
+11. building jar with docker and mvn container
+
+-> docker run --rm -v $PWD/ms-profile-service-api-with-spring-webflux:/app -v /root/.m2/:/root/.m2/ -w /app maven:3.8.7-eclipse-temurin-11-alpine mvn -B -DskipTests -e clean package
+
+        

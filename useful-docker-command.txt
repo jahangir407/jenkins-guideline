@@ -1,0 +1,34 @@
+01. docker stop container_name/container_ID
+-> docker stop my_container
+
+02. launch container terminal 
+-> docker exec -it container_name bash (bash for bach, sh for shell)
+
+03. list all the docker images 
+-> docker images ls
+
+04. to delete all images
+-> docker rmi $(docker images -a -q)
+
+05. to delete all containers including its volume use
+-> docker rm -vf $(docker ps -a -q)
+
+
+
+
+
+
+
+
+-------------------------------------DOCKER_COMPOSER----------------------------------
+01. docker-composer up -d service_name  (spinning up a specific service in detached mode)
+-> docker-compose up -d jenkins
+
+02.  docker-compose stop service_name (stop a specific running service()
+-> docker-compose stop jenkins
+
+03. rm a service/contgainer including volume 
+-> docker-compose rm -f -v jenkins 
+
+02. docker-compose build --no-cache service_name  (builiding new Image for a specific service without using the cache)
+-> docker-compose build --no-cache jenkins
